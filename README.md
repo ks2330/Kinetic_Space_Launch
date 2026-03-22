@@ -111,8 +111,8 @@ The velocity evolution throughout the flight demonstrates the effects of thrust,
 1.  **Requirements:** MATLAB R2022b or newer
 2.  **Clone:**
     ```sh
-    git clone https://github.com/<your-username>/Kinetic-Launch.git
-    cd Kinetic-Launch
+    git clone https://github.com/ks2330/Kinetic_Space_Launch.git
+    cd Kinetic-Space-Launch
     ```
 3.  **Initialize** (automatic path configuration):
     ```matlab
