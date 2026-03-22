@@ -22,3 +22,7 @@ results/
 *.png
 *.jpg
 *.fig
+
+# Except for example images in Images/ directory
+!Images/*.png
+!Images/*.jpg

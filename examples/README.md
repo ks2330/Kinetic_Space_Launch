@@ -15,7 +15,10 @@ From MATLAB, navigate to the root project directory and run:
 
 % Then run examples from the examples folder
 >> cd examples
->> run_tolerance_solver
+>> run_tolerance_solver      % Basic trajectory optimization
+>> run_iterative_solver      % Fixed iteration approach
+>> compare_flat_vs_curved    % Physics model comparison
+>> run_thrust_trajectory     % Rocket propulsion simulation
 ```
 
 ---
@@ -95,6 +98,35 @@ From MATLAB, navigate to the root project directory and run:
 - Interpretation of results
 
 **Run time**: ~60-120 seconds (2 optimizations)
+
+---
+
+### 4. `run_thrust_trajectory.m` 【Rocket Propulsion】
+**Purpose**: Demonstrates active rocket thrust with propellant consumption and variable mass.
+
+**What it does**:
+- Simulates rocket with **100 second thrust burn** during ascent
+- Models realistic thrust force (momentum + pressure components)
+- Accounts for **propellant consumption** (variable rocket mass)
+- Compares thrust trajectory vs. equivalent ballistic flight
+- Shows performance improvements from propulsion
+
+**Learning outcomes**:
+- How rocket thrust affects trajectory compared to pure ballistics
+- Effects of propellant consumption on flight dynamics
+- Momentum vs. pressure thrust components
+- Mass ratio effects on rocket performance
+
+**Expected output**:
+- Thrust trajectory results (apogee, range, TOF, impact velocity)
+- Ballistic comparison results
+- Performance improvement metrics:
+  - Apogee increase (typically 2-5x improvement)
+  - Range extension (significant increase)
+  - Impact velocity differences
+- Side-by-side trajectory comparison plots
+
+**Run time**: ~40-80 seconds (single trajectory simulation)
 
 ---
 
