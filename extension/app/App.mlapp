@@ -1,0 +1,192 @@
+classdef AppForRocket < matlab.apps.AppBase
+
+    % Properties that correspond to app components
+    properties (Access = public)
+        UIFigure                      matlab.ui.Figure
+        ModellingARocketShipPanel     matlab.ui.container.Panel
+        TimeofFlightsEditField        matlab.ui.control.NumericEditField
+        TimeofFlightsEditFieldLabel   matlab.ui.control.Label
+        DistancemEditField            matlab.ui.control.NumericEditField
+        DistancemEditFieldLabel       matlab.ui.control.Label
+        HeightAchievedEditField       matlab.ui.control.NumericEditField
+        HeightAchievedEditFieldLabel  matlab.ui.control.Label
+        ThetadegEditField             matlab.ui.control.NumericEditField
+        ThetadegEditFieldLabel        matlab.ui.control.Label
+        EnterButton                   matlab.ui.control.Button
+        GeometryDropDown              matlab.ui.control.DropDown
+        GeometryDropDownLabel         matlab.ui.control.Label
+        TargetHeightmEditField        matlab.ui.control.NumericEditField
+        TargetHeightmEditFieldLabel   matlab.ui.control.Label
+        ThetaGuess2189degEditField    matlab.ui.control.NumericEditField
+        ThetaGuess2189degEditFieldLabel  matlab.ui.control.Label
+        ThetaGuess1189degEditField    matlab.ui.control.NumericEditField
+        ThetaGuess1189degEditFieldLabel  matlab.ui.control.Label
+    end
+
+    % Callbacks that handle component events
+    methods (Access = private)
+
+        % Button pushed function: EnterButton
+        function EnterButtonPushed(app, event)
+            a = app.TargetHeightmEditField.Value;
+            b = app.ThetaGuess1189degEditField.Value;
+            c = app.ThetaGuess2189degEditField.Value;
+
+            switch app.GeometryDropDown.Value
+                case 'Flat Earth'
+                    [theta3,H3,TOF,~,Distance] = ShootingMethod(b,c,a,1);
+                case 'Curved Earth'
+                    [theta3,H3,TOF,~,Distance] = ShootingMethod(b,c,a,0);
+            end
+
+            app.HeightAchievedEditField.Value = H3;
+            app.ThetadegEditField.Value = theta3;
+            app.TimeofFlightsEditField.Value = TOF;
+            app.DistancemEditField.Value = Distance;
+
+        end
+    end
+
+    % Component initialization
+    methods (Access = private)
+
+        % Create UIFigure and components
+        function createComponents(app)
+
+            % Create UIFigure and hide until all components are created
+            app.UIFigure = uifigure('Visible', 'off');
+            app.UIFigure.Position = [100 100 657 360];
+            app.UIFigure.Name = 'MATLAB App';
+
+            % Create ModellingARocketShipPanel
+            app.ModellingARocketShipPanel = uipanel(app.UIFigure);
+            app.ModellingARocketShipPanel.Title = 'Modelling A Rocket Ship';
+            app.ModellingARocketShipPanel.FontAngle = 'italic';
+            app.ModellingARocketShipPanel.FontWeight = 'bold';
+            app.ModellingARocketShipPanel.FontSize = 16;
+            app.ModellingARocketShipPanel.Position = [62 49 541 261];
+
+            % Create ThetaGuess1189degEditFieldLabel
+            app.ThetaGuess1189degEditFieldLabel = uilabel(app.ModellingARocketShipPanel);
+            app.ThetaGuess1189degEditFieldLabel.HorizontalAlignment = 'right';
+            app.ThetaGuess1189degEditFieldLabel.Position = [26 191 150 22];
+            app.ThetaGuess1189degEditFieldLabel.Text = 'Theta Guess 1 ( 1- 89 deg)';
+
+            % Create ThetaGuess1189degEditField
+            app.ThetaGuess1189degEditField = uieditfield(app.ModellingARocketShipPanel, 'numeric');
+            app.ThetaGuess1189degEditField.Limits = [1 89];
+            app.ThetaGuess1189degEditField.Position = [191 191 100 22];
+            app.ThetaGuess1189degEditField.Value = 1;
+
+            % Create ThetaGuess2189degEditFieldLabel
+            app.ThetaGuess2189degEditFieldLabel = uilabel(app.ModellingARocketShipPanel);
+            app.ThetaGuess2189degEditFieldLabel.HorizontalAlignment = 'right';
+            app.ThetaGuess2189degEditFieldLabel.Position = [26 153 153 22];
+            app.ThetaGuess2189degEditFieldLabel.Text = 'Theta Guess 2  ( 1- 89 deg)';
+
+            % Create ThetaGuess2189degEditField
+            app.ThetaGuess2189degEditField = uieditfield(app.ModellingARocketShipPanel, 'numeric');
+            app.ThetaGuess2189degEditField.Position = [194 153 97 22];
+
+            % Create TargetHeightmEditFieldLabel
+            app.TargetHeightmEditFieldLabel = uilabel(app.ModellingARocketShipPanel);
+            app.TargetHeightmEditFieldLabel.HorizontalAlignment = 'right';
+            app.TargetHeightmEditFieldLabel.Position = [26 109 98 22];
+            app.TargetHeightmEditFieldLabel.Text = 'Target Height (m)';
+
+            % Create TargetHeightmEditField
+            app.TargetHeightmEditField = uieditfield(app.ModellingARocketShipPanel, 'numeric');
+            app.TargetHeightmEditField.Position = [191 109 97 22];
+
+            % Create GeometryDropDownLabel
+            app.GeometryDropDownLabel = uilabel(app.ModellingARocketShipPanel);
+            app.GeometryDropDownLabel.HorizontalAlignment = 'right';
+            app.GeometryDropDownLabel.Position = [26 63 58 22];
+            app.GeometryDropDownLabel.Text = 'Geometry';
+
+            % Create GeometryDropDown
+            app.GeometryDropDown = uidropdown(app.ModellingARocketShipPanel);
+            app.GeometryDropDown.Items = {'Flat Earth', 'Curved Earth'};
+            app.GeometryDropDown.Position = [191 63 100 22];
+            app.GeometryDropDown.Value = 'Flat Earth';
+
+            % Create EnterButton
+            app.EnterButton = uibutton(app.ModellingARocketShipPanel, 'push');
+            app.EnterButton.ButtonPushedFcn = createCallbackFcn(app, @EnterButtonPushed, true);
+            app.EnterButton.Position = [191 20 100 22];
+            app.EnterButton.Text = 'Enter';
+
+            % Create ThetadegEditFieldLabel
+            app.ThetadegEditFieldLabel = uilabel(app.ModellingARocketShipPanel);
+            app.ThetadegEditFieldLabel.HorizontalAlignment = 'right';
+            app.ThetadegEditFieldLabel.Position = [308 108 67 22];
+            app.ThetadegEditFieldLabel.Text = 'Theta (deg)';
+
+            % Create ThetadegEditField
+            app.ThetadegEditField = uieditfield(app.ModellingARocketShipPanel, 'numeric');
+            app.ThetadegEditField.BackgroundColor = [0 1 0];
+            app.ThetadegEditField.Position = [430 108 90 22];
+
+            % Create HeightAchievedEditFieldLabel
+            app.HeightAchievedEditFieldLabel = uilabel(app.ModellingARocketShipPanel);
+            app.HeightAchievedEditFieldLabel.HorizontalAlignment = 'right';
+            app.HeightAchievedEditFieldLabel.Position = [308 62 92 22];
+            app.HeightAchievedEditFieldLabel.Text = 'Height Achieved';
+
+            % Create HeightAchievedEditField
+            app.HeightAchievedEditField = uieditfield(app.ModellingARocketShipPanel, 'numeric');
+            app.HeightAchievedEditField.BackgroundColor = [0 1 0];
+            app.HeightAchievedEditField.Position = [430 62 88 22];
+
+            % Create DistancemEditFieldLabel
+            app.DistancemEditFieldLabel = uilabel(app.ModellingARocketShipPanel);
+            app.DistancemEditFieldLabel.HorizontalAlignment = 'right';
+            app.DistancemEditFieldLabel.Position = [308 154 74 22];
+            app.DistancemEditFieldLabel.Text = 'Distance (m)';
+
+            % Create DistancemEditField
+            app.DistancemEditField = uieditfield(app.ModellingARocketShipPanel, 'numeric');
+            app.DistancemEditField.BackgroundColor = [0 1 0];
+            app.DistancemEditField.Position = [430 154 89 22];
+
+            % Create TimeofFlightsEditFieldLabel
+            app.TimeofFlightsEditFieldLabel = uilabel(app.ModellingARocketShipPanel);
+            app.TimeofFlightsEditFieldLabel.HorizontalAlignment = 'right';
+            app.TimeofFlightsEditFieldLabel.Position = [308 191 95 22];
+            app.TimeofFlightsEditFieldLabel.Text = 'Time of Flight (s)';
+
+            % Create TimeofFlightsEditField
+            app.TimeofFlightsEditField = uieditfield(app.ModellingARocketShipPanel, 'numeric');
+            app.TimeofFlightsEditField.BackgroundColor = [0 1 0];
+            app.TimeofFlightsEditField.Position = [430 191 88 22];
+
+            % Show the figure after all components are created
+            app.UIFigure.Visible = 'on';
+        end
+    end
+
+    % App creation and deletion
+    methods (Access = public)
+
+        % Construct app
+        function app = AppForRocket
+
+            % Create UIFigure and components
+            createComponents(app)
+
+            % Register the app with App Designer
+            registerApp(app, app.UIFigure)
+
+            if nargout == 0
+                clear app
+            end
+        end
+
+        % Code that executes before app deletion
+        function delete(app)
+
+            % Delete UIFigure when app is deleted
+            delete(app.UIFigure)
+        end
+    end
+end

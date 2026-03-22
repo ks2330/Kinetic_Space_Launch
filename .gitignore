@@ -1,0 +1,24 @@
+# MATLAB & Simulink
+*.asv
+*~
+*_autosave.m
+*.bak
+*.mex*
+*.pdb
+*.slx.original
+*.orig
+*.old
+*.tmp
+
+# MATLAB build artifacts
+build/
+resources/
+
+# MATLAB project files
+*.prj
+
+# Output files
+results/
+*.png
+*.jpg
+*.fig
